@@ -1,41 +1,42 @@
 <?php
 // backend.php
+// Credit: The API used in this project was developed by Abrham Bishop(C C Tech)
 
-// Enable CORS if necessary (adjust the allowed origin as needed)
+// CROS
 header("Access-Control-Allow-Origin: *");
 header("Content-Type: application/json; charset=UTF-8");
 
-// Only allow POST requests
+// to ensure the request coming in is only POST
 if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
-    http_response_code(405); // Method Not Allowed
+    http_response_code(405);
     echo json_encode(['error' => 'Only POST requests are allowed.']);
     exit;
 }
 
-// Get the raw POST data
+
 $rawData = file_get_contents("php://input");
 $data = json_decode($rawData, true);
 
-// Validate JSON decoding
+
 if (json_last_error() !== JSON_ERROR_NONE) {
-    http_response_code(400); // Bad Request
+    http_response_code(400); 
     echo json_encode(['error' => 'Invalid JSON input.']);
     exit;
 }
 
-// Extract and sanitize user inputs
+
 $musicStyle = isset($data['musicStyle']) ? trim($data['musicStyle']) : '';
 $country = isset($data['country']) ? trim($data['country']) : '';
 $prompt = isset($data['prompt']) ? trim($data['prompt']) : '';
 
 // Basic validation
 if (empty($musicStyle) || empty($country) || empty($prompt)) {
-    http_response_code(400); // Bad Request
+    http_response_code(400); 
     echo json_encode(['error' => 'Missing required fields: musicStyle, country, prompt.']);
     exit;
 }
 
-// Sanitize inputs to prevent injection (basic sanitization)
+
 $musicStyle = htmlspecialchars($musicStyle, ENT_QUOTES, 'UTF-8');
 $country = htmlspecialchars($country, ENT_QUOTES, 'UTF-8');
 $prompt = htmlspecialchars($prompt, ENT_QUOTES, 'UTF-8');
@@ -49,47 +50,48 @@ $fullPrompt = "You are an AI songwriter specialized in generating song lyrics. "
             . "Ensure the lyrics are creative, engaging, and reflective of the specified theme. "
             . "Do not use any special formatting characters like asterisks (*), bold, or italics in the output.";
 
-// AI API Configuration
-$aiApiUrl = "https://chatbot-y2iq.onrender.com/chatbot"; // Replace with your AI API endpoint
+// AI API link
+$aiApiUrl = "https://chatbot-y2iq.onrender.com/chatbot";
 
-// Initialize cURL
+// Initialize cURL(not that important)
 $ch = curl_init();
 
-// Set cURL options
+// cURL options(this is not actually important, but i did this intentionally)
 curl_setopt($ch, CURLOPT_URL, $aiApiUrl);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-curl_setopt($ch, CURLOPT_TIMEOUT, 60); // Set timeout as needed
+curl_setopt($ch, CURLOPT_TIMEOUT, 60);
 
+// i used the below in respect to open ai documentation, you can check their documentation online for more about this
 $payload = json_encode([
     'prompt' => $fullPrompt,
-    'temperature' => 2.0, // Adjust for creativity
-    'n' => 1, // Number of responses
-    'stop' => null // Define stop sequences if necessary
+    'temperature' => 2.0, 
+    'n' => 1,
+    'stop' => null 
 ]);
 
 curl_setopt($ch, CURLOPT_POST, true);
 curl_setopt($ch, CURLOPT_POSTFIELDS, $payload);
 
-// Set headers
+// Now let us Set headers
 $headers = [
     'Content-Type: application/json',
     'Content-Length: ' . strlen($payload)
 ];
 
-// If the API requires an API key, include it in the headers
+//this api do not actually requires any api key
 if (!empty($apiKey)) {
     $headers[] = 'Authorization: Bearer ' . $apiKey;
 }
 
 curl_setopt($ch, CURLOPT_HTTPHEADER, $headers);
 
-// Execute the API request
+// Now, let us execute the API request
 $response = curl_exec($ch);
 $response = str_replace('*', '', $response);
 
-// Handle cURL errors
+// Lets handle some cURL errors
 if ($response === false) {
-    http_response_code(500); // Internal Server Error
+    http_response_code(500); 
     echo json_encode(['error' => 'cURL Error: ' . curl_error($ch)]);
     curl_close($ch);
     exit;
@@ -105,15 +107,14 @@ curl_close($ch);
 if ($httpStatus === 200) {
     $responseData = json_decode($response, true);
     
-    // Adjust based on your AI API's response structure
-    if (isset($responseData['response'])) { // Example for the given API
+    if (isset($responseData['response'])) { 
         $song = $responseData['response'];
         echo json_encode(['song' => $song]);
-    } elseif (isset($responseData['choices'][0]['text'])) { // Example for OpenAI
+    } elseif (isset($responseData['choices'][0]['text'])) { 
         $song = trim($responseData['choices'][0]['text']);
         echo json_encode(['song' => $song]);
     } else {
-        // Handle unexpected response structure
+        // error for unexpected responses
         echo json_encode(['error' => 'Unexpected API response structure.']);
     }
 } else {
