@@ -20,4 +20,4 @@ jobs:
         username: ${{ secrets.FTP_USERNAME }}
         password: ${{ secrets.FTP_PASSWORD }}
         local-dir: ./  # Directory to upload
-        server-dir: /peacemathew.com.ng/htdocs/kiana-ai  # Adjust to your InfinityFree directory
+        server-dir: /peacemathew.com.ng/htdocs/kiana-ai/  # Adjust to your InfinityFree directory
