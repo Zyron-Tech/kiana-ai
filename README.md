@@ -1,4 +1,4 @@
-# Kiana AIh 🎵  
+# Kiana AI 🎵  
 **AI-Powered Songwriting Platform**  
 
 Kiana AI is an innovative platform that uses artificial intelligence to help users create and customize song lyrics effortlessly. Designed with a responsive and user-friendly interface, Kiana AI empowers creativity and simplifies the music composition process.
