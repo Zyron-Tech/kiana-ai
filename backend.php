@@ -48,8 +48,8 @@ $fullPrompt = "You are an AI songwriter specialized in generating song lyrics. "
             . "Do not use any special formatting characters like asterisks (*), bold, or italics in the output.";
 
 // API URL (Ensure this is set in your environment variables)
-$aiApiUrl = getenv('API_URL');
-
+// $aiApiUrl = getenv('API_URL');
+$aiApiUrl = 'https://chatbot-y2iq.onrender.com/chatbot'
 // Initialize cURL
 $ch = curl_init();
 
