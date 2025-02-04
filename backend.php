@@ -51,7 +51,7 @@ $fullPrompt = "You are an AI songwriter specialized in generating song lyrics. "
             . "Do not use any special formatting characters like asterisks (*), bold, or italics in the output.";
 
 // AI API link
-$aiApiUrl = ${{ secrets.API_URL }} ;
+$aiApiUrl = getenv('API_URL');
 
 // Initialize cURL(not that important)
 $ch = curl_init();
