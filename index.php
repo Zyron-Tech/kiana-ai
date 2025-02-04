@@ -157,7 +157,7 @@
                 if (data.song) {
                     output.innerText = data.song;
                 } else {
-                    output.innerText = 'Sorry, something went wrong!';
+                    output.innerText = data.song';
                 }
             } catch (error) {
                 output.innerText = 'Error: Unable to generate a song.';
